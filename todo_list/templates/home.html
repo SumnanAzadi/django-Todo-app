@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %} To Do App {% endblock %}
+{% block header %} <h3>To-Do List</h3> {% endblock %}
+{% block content %}
+	<div class="container">
+		{# Add Your Item Form #}
+		<div class="row d-flex justify-content-center">
+			<form method="POST">
+				{% csrf_token %}
+				<div class="form-row">
+					<div class="col-auto my-1">
+						<input type="text" class="form-control" id="item" name ="item" placeholder="Input Your Item">
+					</div>
+					<div class="col-auto my-1">
+						<button type="submit" class="btn btn-primary">Add To List</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		{# Edit Your Item Form #}
+		<div class="row d-flex justify-content-center">
+			{% if item %}
+				<form method="POST">
+					{% csrf_token %}
+					<div class="form-row">
+						<div class="col-auto my-1">
+							<input type="text" class="form-control" id="editItem" name ="item"
+							value="{{ item.item }}">
+							<input type="hidden" value="{{ item.completed }}" name="completed">
+						</div>
+						<div class="col-auto my-1">
+							<button type="submit" class="btn btn-primary"><span class="oi oi-check"></span></button>
+						</div>
+						<div class="col-auto my-1">
+							<button type="reset" class="btn btn-primary" onclick="javascript:history.back();"><span class="oi oi-x"></span></button>
+						</div>
+					</div>
+				</form>
+			{% else %}
+			{% endif %}
+		</div>
+		{# Message  #}
+		<div class="row d-flex justify-content-center">
+			{% if messages %}
+				{% for message in messages %}
+					<div class="alert alert-warning alert-dismissible fade show" role="alert">
+						{{message}}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+		{# All The Items In a Table #}
+		<div class="row mt-3">
+			{% if all_items %}
+				<table class="table table-bordered">
+					{% for thing in all_items %}
+						{% if thing.completed %}
+							<tr class="table-secondary">
+								<td scope="col" class="striker">{{thing.item}} <a href=" {% url 'edit' thing.id %} " ><span class="d-flex justify-content-end oi oi-document"></span></a> </td>
+								<td scope="col"><a href=" {% url 'uncross' thing.id %} "><span class="oi oi-x"></span></a></td>
+								<td scope="col"><button type="button" class="btn btn-danger"><a href="{% url 'delete' thing.id %}" class="text-dark"><span class="oi oi-delete"></span></a></button></td>
+							</tr>
+						{% else %}
+							<tr>
+								<td scope="col">{{thing.item}} <a href=" {% url 'edit' thing.id %} " ><span class="d-flex justify-content-end oi oi-document"></span></a> </td>
+								<td scope="col"><a href=" {% url 'cross' thing.id %} " ><span class="oi oi-check"></span></a></td>
+								<td scope="col"><button type="button" class="btn btn-danger"><a href="{% url 'delete' thing.id %}" class="text-dark"><span class="oi oi-delete"></span></a></button></td>
+							</tr>
+						{% endif %}
+					{% endfor %}
+				</table>
+			{% endif %}
+		</div>
+	</div>
+{% endblock content %}
